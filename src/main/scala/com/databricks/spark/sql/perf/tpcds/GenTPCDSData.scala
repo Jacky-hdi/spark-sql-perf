@@ -117,5 +117,7 @@ object GenTPCDSData {
       filterOutNullPartitionValues = config.filterOutNullPartitionValues,
       tableFilter = config.tableFilter,
       numPartitions = config.numPartitions)
+
+    spark.stop()
   }
 }

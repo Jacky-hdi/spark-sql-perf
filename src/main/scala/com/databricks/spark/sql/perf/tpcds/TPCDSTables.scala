@@ -23,6 +23,7 @@ import com.databricks.spark.sql.perf.{BlockingLineStream, DataGenerator, Table, 
 
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
+import org.apache.spark.SparkFiles
 
 class DSDGEN(dsdgenDir: String) extends DataGenerator {
   val dsdgen = s"$dsdgenDir/dsdgen"
@@ -34,7 +35,9 @@ class DSDGEN(dsdgenDir: String) extends DataGenerator {
           dsdgenDir
         } else if (new java.io.File(s"/$dsdgen").exists) {
           s"/$dsdgenDir"
-        } else {
+        } else if (new java.io.File(SparkFiles.get("dsdgen")).exists){
+          new java.io.File(SparkFiles.get("dsdgen")).getParent()
+        }else {
           sys.error(s"Could not find dsdgen at $dsdgen or /$dsdgen. Run install")
         }
 
