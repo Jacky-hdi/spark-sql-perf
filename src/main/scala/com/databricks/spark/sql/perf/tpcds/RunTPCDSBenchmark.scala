@@ -30,9 +30,9 @@ object RunTPCDSBenchmark {
       opt[String]('l', "location")
         .action((x, c) => c.copy(location = x))
         .text("root directory of location to save benchmark results")
-      opt[String]('d', "databaseName")
+      opt[String]("databaseName")
         .action((x, c) => c.copy(databaseName = x))
-        .text("MetaStore database name")
+        .text("HiveMetaStore database name")
       opt[Int]('i', "iterations")
         .action((x, c) => c.copy(iterations = x))
         .text("the number of iterations to run")
@@ -65,7 +65,7 @@ object RunTPCDSBenchmark {
     val randomizeQueries = false
     def queries = {
       val filtered_queries = config.filter match {
-        case Seq() => tpcds.tpcds2_4Queries
+        case None => tpcds.tpcds2_4Queries
         case _ => tpcds.tpcds2_4Queries.filter(q => config.filter.contains(q.name))
       }
       if (randomizeQueries) scala.util.Random.shuffle(filtered_queries) else filtered_queries

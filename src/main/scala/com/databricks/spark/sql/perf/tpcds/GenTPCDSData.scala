@@ -31,7 +31,8 @@ case class GenTPCDSDataConfig(
     clusterByPartitionColumns: Boolean = true,
     filterOutNullPartitionValues: Boolean = true,
     tableFilter: String = "",
-    numPartitions: Int = 100)
+    numPartitions: Int = 100,
+    databaseName: String = null)
 
 /**
  * Gen TPCDS data.
@@ -83,6 +84,9 @@ object GenTPCDSData {
       opt[Int]('n', "numPartitions")
         .action((x, c) => c.copy(numPartitions = x))
         .text("how many dsdgen partitions to run - number of input tasks.")
+      opt[String]("databaseName")
+        .action((x, c) => c.copy(databaseName = x))
+        .text("HiveMetaStore database name")
       help("help")
         .text("prints this usage text")
     }
@@ -117,7 +121,13 @@ object GenTPCDSData {
       filterOutNullPartitionValues = config.filterOutNullPartitionValues,
       tableFilter = config.tableFilter,
       numPartitions = config.numPartitions)
+    if(config.databaseName != null){
+      println("create HiveMetaStore database and external tables")
+      spark.sql(s"create database if not exists ${config.databaseName}")
+      tables.createExternalTables(config.location, config.format, config.databaseName, overwrite = true, discoverPartitions = true)
+      tables.analyzeTables(config.databaseName, analyzeColumns = true)
 
+    }
     spark.stop()
   }
 }
