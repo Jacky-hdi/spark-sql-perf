@@ -14,7 +14,7 @@ case class RunTPCDSConfig(
                       location: String = null,
                       databaseName: String = "tpcds",
                       filter: Option[String] = None,
-                      iterations: Int = 3,
+                      iterations: Int = 1,
                       baseline: Option[Long] = None)
 
 object RunTPCDSBenchmark {
