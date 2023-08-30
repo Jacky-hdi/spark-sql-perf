@@ -6,7 +6,7 @@ import scala.language.implicitConversions
 
 import org.slf4j.LoggerFactory
 
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import com.databricks.spark.sql.perf._
@@ -15,7 +15,7 @@ import com.databricks.spark.sql.perf._
 class MLLib(sqlContext: SQLContext)
   extends Benchmark(sqlContext) with Serializable {
 
-  def this() = this(SQLContext.getOrCreate(SparkContext.getOrCreate()))
+  def this() = this(SparkSession.builder().appName("MLLib Benchmark").getOrCreate().sqlContext)
 }
 
 object MLLib {
@@ -28,7 +28,7 @@ object MLLib {
    */
 
   lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
-
+  //var sc: SparkContext = null
   def runDefault(runConfig: RunConfig): DataFrame = {
     val ml = new MLLib()
     val benchmarks = MLBenchmarks.benchmarkObjects
@@ -55,6 +55,8 @@ object MLLib {
   def main(args: Array[String]): Unit = {
     val configFile = args(0)
     run(yamlFile = configFile)
+    val sc = SparkSession.builder().getOrCreate()
+    if (sc!=null)sc.stop()
   }
 
   private[mllib] def getConf(yamlFile: String = null, yamlConfig: String = null): YamlConfig = {
@@ -81,9 +83,9 @@ object MLLib {
   def run(yamlFile: String = null, yamlConfig: String = null): DataFrame = {
     logger.info("Starting run")
     val conf = getConf(yamlFile, yamlConfig)
-    val sparkConf = new SparkConf().setAppName("MLlib QA").setMaster("local[2]")
-    val sc = SparkContext.getOrCreate(sparkConf)
-    sc.setLogLevel("INFO")
+    //val sparkConf = new SparkConf()//.setAppName("MLlib QA")
+    //sc = SparkContext.getOrCreate(sparkConf)
+    //sc.setLogLevel("INFO")
     val b = new com.databricks.spark.sql.perf.mllib.MLLib()
     val benchmarks = getBenchmarks(conf)
     println(s"${benchmarks.size} benchmarks identified:")

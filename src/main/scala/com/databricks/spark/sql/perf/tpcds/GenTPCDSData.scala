@@ -19,7 +19,7 @@ package com.databricks.spark.sql.perf.tpcds
 import org.apache.spark.sql.SparkSession
 
 case class GenTPCDSDataConfig(
-    master: String = "local[*]",
+   // master: String = "local[*]",
     dsdgenDir: String = null,
     scaleFactor: String = null,
     location: String = null,
@@ -44,9 +44,9 @@ case class GenTPCDSDataConfig(
 object GenTPCDSData {
   def main(args: Array[String]): Unit = {
     val parser = new scopt.OptionParser[GenTPCDSDataConfig]("Gen-TPC-DS-data") {
-      opt[String]('m', "master")
-        .action { (x, c) => c.copy(master = x) }
-        .text("the Spark master to use, default to local[*]")
+   //   opt[String]('m', "master")
+    //    .action { (x, c) => c.copy(master = x) }
+     //   .text("the Spark master to use, default to local[*]")
       opt[String]('d', "dsdgenDir")
         .action { (x, c) => c.copy(dsdgenDir = x) }
         .text("location of dsdgen")
@@ -103,7 +103,7 @@ object GenTPCDSData {
     val spark = SparkSession
       .builder()
       .appName(getClass.getName)
-      .master(config.master)
+     // .master(config.master)
       .getOrCreate()
 
     val tables = new TPCDSTables(spark.sqlContext,

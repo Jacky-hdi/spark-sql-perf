@@ -10,7 +10,7 @@ import org.apache.spark.sql.functions.{avg, explode, max, min, stddev, when}
 
 
 case class RunTPCDSConfig(
-                      master: String = "local[*]",
+                      //master: String = "local[*]",
                       location: String = null,
                       databaseName: String = "tpcds",
                       filter: Option[String] = None,
@@ -21,9 +21,9 @@ object RunTPCDSBenchmark {
   def main(args: Array[String]): Unit = {
     val parser = new scopt.OptionParser[RunTPCDSConfig]("spark-sql-perf") {
       head("spark-sql-perf", "0.7.0")
-      opt[String]('m', "master")
-        .action { (x, c) => c.copy(master = x) }
-        .text("the Spark master to use, default to local[*]")
+     // opt[String]('m', "master")
+      //  .action { (x, c) => c.copy(master = x) }
+      //  .text("the Spark master to use, default to local[*]")
       opt[String]('f', "filter")
         .action((x, c) => c.copy(filter = Some(x)))
         .text("a filter on the name of the queries to run")
@@ -53,7 +53,7 @@ object RunTPCDSBenchmark {
 
   def run(config: RunTPCDSConfig): Unit = {
     val conf = new SparkConf()
-      .setMaster(config.master)
+      //.setMaster(config.master)
       .setAppName(getClass.getName)
 
     val sparkSession = SparkSession.builder.config(conf).getOrCreate()
